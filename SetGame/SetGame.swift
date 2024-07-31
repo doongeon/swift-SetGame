@@ -35,10 +35,10 @@ struct SetGame<CardContent> {
     }
     
     struct Card: Identifiable {
-        var color: String
-        var count: Int
-        var content: CardContent
-        var shade: String
+        let color: String
+        let count: Int
+        let content: CardContent
+        let shade: String
         
         var id: String
     }
