@@ -39,6 +39,6 @@ struct CardTheme<CardContent> {
             }
         }
         
-        return result
+        return result.shuffled()
     }
 }
