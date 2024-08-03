@@ -20,6 +20,10 @@ class ShapeSetGame: ObservableObject {
         setGame.choices
     }
     
+    var isSet: Bool {
+        setGame.isSet
+    }
+    
     // MARK: - Intents
     
     func draw() {
@@ -28,5 +32,9 @@ class ShapeSetGame: ObservableObject {
     
     func choose(_ card: SetGame.Card) {
         setGame.choose(card)
+    }
+    
+    func cheat() -> Void  {
+        setGame.cheat()
     }
 }

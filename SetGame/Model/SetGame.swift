@@ -10,6 +10,8 @@ import Foundation
 struct SetGame {
     private(set) var deck: Array<Card>
     private(set) var choices: Array<Card>
+    private(set) var cheatSet: Array<Int>?
+    private(set) var isSet: Bool = false 
     
     init(_ deckGenerator: () -> Array<Card>) {
         self.deck = deckGenerator()
@@ -41,7 +43,6 @@ struct SetGame {
                 
                 if (isColorSet && isContentSet && isNumOfShapeSet && isShadeSet) {
                     // correct set
-                    print("correct set!")
                     selectedCards.forEach { selectedCard in
                         if let setIndex = choices.firstIndex(where: { choice in choice.id == selectedCard.id}) {
                             choices.remove(at: setIndex)
@@ -57,66 +58,99 @@ struct SetGame {
                     }
                 }
             }
-            
             choices[chosenIndex].isSelected.toggle()
-        }
-        
-        func checkColor(selectedCards: Array<Card>) -> Bool {
-            if(
-                selectedCards[0].color == selectedCards[1].color &&
-                selectedCards[0].color == selectedCards[2].color
-            ) {
-                return true
-            } else if(
-                selectedCards[0].color != selectedCards[1].color &&
-                selectedCards[0].color != selectedCards[2].color &&
-                selectedCards[1].color != selectedCards[2].color
-            ) {
-                return true
-            } else {
-                print("color not set")
-                return false
-            }
-        }
-        
-        func checkShade(selectedCards: Array<Card>) -> Bool {
-            if(
-                selectedCards[0].shade == selectedCards[1].shade &&
-                selectedCards[0].shade == selectedCards[2].shade
-            ) {
-                return true
-            } else if(
-                selectedCards[0].shade != selectedCards[1].shade &&
-                selectedCards[0].shade != selectedCards[2].shade &&
-                selectedCards[1].shade != selectedCards[2].shade
-            ) {
-                return true
-            } else {
-                print("shade not set")
-                return false
-            }
-        }
-        
-        func checkContent(selectedCards: Array<Card>) -> Bool {
-            if(
-                selectedCards[0].content == selectedCards[1].content &&
-                selectedCards[0].content == selectedCards[2].content
-            ) {
-                return true
-            } else if(
-                selectedCards[0].content != selectedCards[1].content &&
-                selectedCards[0].content != selectedCards[2].content &&
-                selectedCards[1].content != selectedCards[2].content
-            ) {
-                return true
-            } else {
-                print("content not set")
-                return false
-            }
         }
     }
     
-    func checkNumOfShape(selectedCards: Array<Card>) -> Bool {
+    mutating func cheat() -> Void {
+        calculateCorrectSet()
+        
+        if(isSet) {
+            cheatSet?.forEach({index in choices[index].isCheatSet = true })
+        }
+    }
+    
+    private mutating func calculateCorrectSet() -> Void {
+        isSet = false
+        cheatSet = []
+        
+        for i in 0..<choices.count {
+            for j in (i+1)..<choices.count {
+                for k in (j+1)..<choices.count {
+                    let tempSet = [choices[i], choices[j], choices[k]]
+                    
+                    let isColorSet = checkColor(selectedCards: tempSet)
+                    let isContentSet = checkContent(selectedCards: tempSet)
+                    let isNumOfShapeSet = checkNumOfShape(selectedCards: tempSet)
+                    let isShadeSet = checkShade(selectedCards: tempSet)
+                    
+                    if (isColorSet && isContentSet && isNumOfShapeSet && isShadeSet) {
+                        isSet = true
+                        cheatSet = [i, j, k]
+                        return
+                    }
+                }
+            }
+        }
+        
+        print("there is no set")
+    }
+    
+    private func checkColor(selectedCards: Array<Card>) -> Bool {
+        if(
+            selectedCards[0].color == selectedCards[1].color &&
+            selectedCards[0].color == selectedCards[2].color
+        ) {
+            return true
+        } else if(
+            selectedCards[0].color != selectedCards[1].color &&
+            selectedCards[0].color != selectedCards[2].color &&
+            selectedCards[1].color != selectedCards[2].color
+        ) {
+            return true
+        } else {
+//            print("color not set")
+            return false
+        }
+    }
+    
+    private func checkShade(selectedCards: Array<Card>) -> Bool {
+        if(
+            selectedCards[0].shade == selectedCards[1].shade &&
+            selectedCards[0].shade == selectedCards[2].shade
+        ) {
+            return true
+        } else if(
+            selectedCards[0].shade != selectedCards[1].shade &&
+            selectedCards[0].shade != selectedCards[2].shade &&
+            selectedCards[1].shade != selectedCards[2].shade
+        ) {
+            return true
+        } else {
+//            print("shade not set")
+            return false
+        }
+    }
+    
+    private func checkContent(selectedCards: Array<Card>) -> Bool {
+        if(
+            selectedCards[0].content == selectedCards[1].content &&
+            selectedCards[0].content == selectedCards[2].content
+        ) {
+            return true
+        } else if(
+            selectedCards[0].content != selectedCards[1].content &&
+            selectedCards[0].content != selectedCards[2].content &&
+            selectedCards[1].content != selectedCards[2].content
+        ) {
+            return true
+        } else {
+//            print("content not set")
+            return false
+        }
+    }
+    
+    private func checkNumOfShape(selectedCards: Array<Card>) -> Bool {
         if(
             selectedCards[0].numOfShape == selectedCards[1].numOfShape &&
             selectedCards[0].numOfShape == selectedCards[2].numOfShape
@@ -129,12 +163,10 @@ struct SetGame {
         ) {
             return true
         } else {
-            print("shape not set")
+//            print("shape not set")
             return false
         }
     }
-    
-    
     
     struct Card: Equatable, Identifiable {
         let color: CardTheme.colors
@@ -142,6 +174,7 @@ struct SetGame {
         let content: CardTheme.contents
         let shade: CardTheme.shades
         
+        var isCheatSet: Bool = false
         var isSet: Bool = false
         var isSelected: Bool = false
         

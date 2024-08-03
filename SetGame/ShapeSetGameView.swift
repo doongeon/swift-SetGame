@@ -20,6 +20,11 @@ struct ShapeSetGameView: View {
             Button("Draw") {
                 shapeSetGame.draw()
             }
+            
+            Button("cheat") {
+                shapeSetGame.cheat()
+            }
+            
         }
         .padding()
         
@@ -60,10 +65,14 @@ struct CardView: View  {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                .stroke(interpretCardColor(card.color), lineWidth: 4)
+                .stroke(interpretCardColor(card.color), lineWidth: 2)
             
             RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                .fill(card.isSelected ? .yellow : .white)
+                .fill(card.isCheatSet ? .yellow : .white)
+                .opacity(0.3)
+            
+            RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                .stroke(.black, lineWidth: card.isSelected ? 4 : 0)
             
             cardContentView
                 .padding()
