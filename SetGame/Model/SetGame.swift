@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct SetGame<CardContent> {
+struct SetGame {
     private(set) var deck: Array<Card>
     private(set) var choices: Array<Card>
+    private(set) var chosenCardIndecies: Array<Int> = []
     
     init(_ deckGenerator: () -> Array<Card>) {
         self.deck = deckGenerator()
@@ -30,15 +31,20 @@ struct SetGame<CardContent> {
         }
     }
     
-    func choose(_ card: Card) -> Void {
-        print(card)
+    mutating func choose(_ card: Card) -> Void {
+        if let chosenIndex = choices.firstIndex(where: { $0.id == card.id }) {
+            choices[chosenIndex].isSelected.toggle()
+        }
     }
     
-    struct Card: Identifiable {
-        let color: String
-        let count: Int
-        let content: CardContent
-        let shade: String
+    struct Card: Equatable, Identifiable {
+        let color: CardTheme.colors
+        let numOfShape: CardTheme.numOfShape
+        let content: CardTheme.contents
+        let shade: CardTheme.shades
+        
+        var isSet: Bool = false
+        var isSelected: Bool = false
         
         var id: String
     }

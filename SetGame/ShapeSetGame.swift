@@ -8,18 +8,15 @@
 import Foundation
 
 class ShapeSetGame: ObservableObject {
-    private var theme: CardTheme<String>
-    @Published private var setGame: SetGame<String>
+    private var cardTheme: CardTheme
+    @Published private var setGame: SetGame
     
     init() {
-        theme = CardTheme(
-            colors: ["red", "green", "blue"],
-            contents: ["circle", "square", "triangle"]
-        )
-        self.setGame = SetGame<String>(theme.deckGenerator)
+        cardTheme = CardTheme()
+        self.setGame = SetGame(cardTheme.deckGenerator)
     }
     
-    var choices: Array<SetGame<String>.Card> {
+    var choices: Array<SetGame.Card> {
         setGame.choices
     }
     
@@ -29,7 +26,7 @@ class ShapeSetGame: ObservableObject {
         setGame.draw()
     }
     
-    func choose(_ card: SetGame<String>.Card) {
+    func choose(_ card: SetGame.Card) {
         setGame.choose(card)
     }
 }
