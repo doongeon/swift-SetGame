@@ -15,15 +15,46 @@ struct ShapeSetGameView: View {
             Text("Set Game")
                 .font(.largeTitle)
             
+            Text("Score: \(shapeSetGame.score)")
+            
             cards
             
-            Button("Draw") {
-                shapeSetGame.draw()
+            HStack {
+                Button(action: {shapeSetGame.draw()}, label: {
+                    VStack(spacing: 5) {
+                        Image(systemName: "arrow.turn.up.forward.iphone")
+                            .font(.title)
+                            .imageScale(.large)
+                        Text("Draw")
+                    }
+                })
+                
+                Spacer()
+                
+                Button(action: {shapeSetGame.newGame()}, label: {
+                    VStack(spacing: 5) {
+                        Image(systemName: "gamecontroller")
+                            .font(.title)
+                            .imageScale(.large)
+                        Text("New Game")
+                    }
+                })
+                
+                Spacer()
+                
+                Button(action: {shapeSetGame.cheat()}, label: {
+                    VStack(spacing: 5) {
+                        Image(systemName: "warninglight")
+                            .font(.title)
+                            .imageScale(.large)
+                            .rotationEffect(.degrees(180))
+                        Text("Cheat")
+                    }
+                })
             }
+            .padding()
             
-            Button("cheat") {
-                shapeSetGame.cheat()
-            }
+            
             
         }
         .padding()
@@ -45,10 +76,11 @@ struct ShapeSetGameView: View {
                             .onTapGesture {
                                 shapeSetGame.choose(card)
                             }
-                            .animation(.default, value: shapeSetGame.choices)
                     }
                 }
             }
+            .animation(.default, value: shapeSetGame.choices)
+            
             Spacer()
         }
     }
@@ -106,11 +138,11 @@ struct CardView: View  {
     @ViewBuilder
     var shape: some View {
         switch(card.content) {
-        case CardTheme.contents.a:
+        case CardTheme.contents.content_a:
             circle
-        case CardTheme.contents.b:
+        case CardTheme.contents.content_b:
             triangle
-        case CardTheme.contents.c:
+        case CardTheme.contents.content_c:
             diamond
         }
     }

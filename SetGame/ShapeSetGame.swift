@@ -21,10 +21,22 @@ class ShapeSetGame: ObservableObject {
     }
     
     var isSet: Bool {
-        setGame.isSet
+        if(setGame.cheatSet.count == 0) {
+            false 
+        } else {
+            true
+        }
+    }
+    
+    var score: Int {
+        setGame.score
     }
     
     // MARK: - Intents
+    
+    func newGame() {
+        self.setGame = SetGame(cardTheme.deckGenerator)
+    }
     
     func draw() {
         setGame.draw()

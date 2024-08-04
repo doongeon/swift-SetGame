@@ -14,9 +14,9 @@ struct CardTheme {
         case blue
     }
     enum contents: CaseIterable {
-        case a
-        case b
-        case c
+        case content_a
+        case content_b
+        case content_c
     }
     enum numOfShape: CaseIterable {
         case one

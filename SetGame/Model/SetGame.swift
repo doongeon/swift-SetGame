@@ -8,10 +8,10 @@
 import Foundation
 
 struct SetGame {
+    private(set) var score: Int = 0
     private(set) var deck: Array<Card>
     private(set) var choices: Array<Card>
-    private(set) var cheatSet: Array<Int>?
-    private(set) var isSet: Bool = false 
+    private(set) var cheatSet: Array<Int> = []
     
     init(_ deckGenerator: () -> Array<Card>) {
         self.deck = deckGenerator()
@@ -25,6 +25,12 @@ struct SetGame {
     }
     
     mutating func draw() -> Void {
+        calculateCorrectSet()
+        
+        if(cheatSet.count != 0) {
+            score -= 1
+        }
+        
         for _ in 0..<3 {
             if let popedCard = deck.popLast() {
                 choices.append(popedCard)
@@ -48,7 +54,14 @@ struct SetGame {
                             choices.remove(at: setIndex)
                         }
                     }
-                    draw()
+                    score += 3
+                    
+                    for _ in 0..<3 {
+                        if let popedCard = deck.popLast() {
+                            choices.append(popedCard)
+                        }
+                    }
+                    
                 } else {
                     // wrong set
                     selectedCards.forEach { selectedCard in
@@ -56,6 +69,8 @@ struct SetGame {
                             choices[setIndex].isSelected = false
                         }
                     }
+                    
+                    score -= 1
                 }
             }
             choices[chosenIndex].isSelected.toggle()
@@ -65,13 +80,12 @@ struct SetGame {
     mutating func cheat() -> Void {
         calculateCorrectSet()
         
-        if(isSet) {
-            cheatSet?.forEach({index in choices[index].isCheatSet = true })
+        if(cheatSet.count != 0) {
+            cheatSet.forEach({index in choices[index].isCheatSet = true })
         }
     }
     
     private mutating func calculateCorrectSet() -> Void {
-        isSet = false
         cheatSet = []
         
         for i in 0..<choices.count {
@@ -85,7 +99,6 @@ struct SetGame {
                     let isShadeSet = checkShade(selectedCards: tempSet)
                     
                     if (isColorSet && isContentSet && isNumOfShapeSet && isShadeSet) {
-                        isSet = true
                         cheatSet = [i, j, k]
                         return
                     }
