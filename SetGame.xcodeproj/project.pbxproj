@@ -14,6 +14,7 @@
 		76CBC9802C59DA9E00097C2E /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CBC97F2C59DA9E00097C2E /* SetGame.swift */; };
 		76CBC9822C59E16700097C2E /* ShapeSetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CBC9812C59E16700097C2E /* ShapeSetGame.swift */; };
 		76CBC9842C59E2AD00097C2E /* CardTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CBC9832C59E2AD00097C2E /* CardTheme.swift */; };
+		76D917EF2C5F0F0B00A0A2A0 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76D917EE2C5F0F0B00A0A2A0 /* AspectVGrid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		76CBC97F2C59DA9E00097C2E /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
 		76CBC9812C59E16700097C2E /* ShapeSetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSetGame.swift; sourceTree = "<group>"; };
 		76CBC9832C59E2AD00097C2E /* CardTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTheme.swift; sourceTree = "<group>"; };
+		76D917EE2C5F0F0B00A0A2A0 /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,9 +59,10 @@
 		76CBC9702C59DA6F00097C2E /* SetGame */ = {
 			isa = PBXGroup;
 			children = (
+				76D917ED2C5F0ED300A0A2A0 /* View */,
 				76CBC9712C59DA6F00097C2E /* SetGameApp.swift */,
-				76CBC9732C59DA6F00097C2E /* ShapeSetGameView.swift */,
 				76CBC9812C59E16700097C2E /* ShapeSetGame.swift */,
+				76CBC9732C59DA6F00097C2E /* ShapeSetGameView.swift */,
 				76D917EC2C5DC3F200A0A2A0 /* Model */,
 				76CBC9752C59DA7000097C2E /* Assets.xcassets */,
 				76CBC9772C59DA7000097C2E /* Preview Content */,
@@ -82,6 +85,14 @@
 				76CBC9832C59E2AD00097C2E /* CardTheme.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		76D917ED2C5F0ED300A0A2A0 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				76D917EE2C5F0F0B00A0A2A0 /* AspectVGrid.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,6 +167,7 @@
 			files = (
 				76CBC9742C59DA6F00097C2E /* ShapeSetGameView.swift in Sources */,
 				76CBC9722C59DA6F00097C2E /* SetGameApp.swift in Sources */,
+				76D917EF2C5F0F0B00A0A2A0 /* AspectVGrid.swift in Sources */,
 				76CBC9842C59E2AD00097C2E /* CardTheme.swift in Sources */,
 				76CBC9802C59DA9E00097C2E /* SetGame.swift in Sources */,
 				76CBC9822C59E16700097C2E /* ShapeSetGame.swift in Sources */,

@@ -14,77 +14,70 @@ struct ShapeSetGameView: View {
         VStack {
             Text("Set Game")
                 .font(.largeTitle)
-            
             Text("Score: \(shapeSetGame.score)")
-            
             cards
-            
-            HStack {
-                Button(action: {shapeSetGame.draw()}, label: {
-                    VStack(spacing: 5) {
-                        Image(systemName: "arrow.turn.up.forward.iphone")
-                            .font(.title)
-                            .imageScale(.large)
-                        Text("Draw")
-                    }
-                })
-                
-                Spacer()
-                
-                Button(action: {shapeSetGame.newGame()}, label: {
-                    VStack(spacing: 5) {
-                        Image(systemName: "gamecontroller")
-                            .font(.title)
-                            .imageScale(.large)
-                        Text("New Game")
-                    }
-                })
-                
-                Spacer()
-                
-                Button(action: {shapeSetGame.cheat()}, label: {
-                    VStack(spacing: 5) {
-                        Image(systemName: "warninglight")
-                            .font(.title)
-                            .imageScale(.large)
-                            .rotationEffect(.degrees(180))
-                        Text("Cheat")
-                    }
-                })
-            }
-            .padding()
-            
-            
-            
+            buttons
         }
         .padding()
         
     }
     
+    var buttons: some View {
+        HStack(alignment: .bottom, spacing: 40) {
+            drawButton
+            newgameButton
+            cheatButton
+        }
+        .padding()
+    }
+    
+    var drawButton: some View {
+        Button(action: {shapeSetGame.draw()}, label: {
+            VStack(spacing: 5) {
+                Image(systemName: "arrow.turn.up.forward.iphone")
+                    .font(.title)
+                    .imageScale(.large)
+                Text("Draw")
+            }
+        })
+    }
+    
+    var newgameButton: some View {
+        Button(action: {shapeSetGame.newGame()}, label: {
+            VStack(spacing: 5) {
+                Image(systemName: "gamecontroller")
+                    .font(.title)
+                    .imageScale(.large)
+                Text("New Game")
+            }
+        })
+    }
+    
+    var cheatButton: some View {
+        Button(action: {shapeSetGame.cheat()}, label: {
+            VStack(spacing: 5) {
+                Image(systemName: "warninglight")
+                    .font(.title)
+                    .imageScale(.large)
+                    .rotationEffect(.degrees(180))
+                Text("Cheat")
+            }
+        })
+    }
+    
     var cards: some View {
         Group {
-            ScrollView {
-                LazyVGrid(
-                    columns: [GridItem(
-                        .adaptive(minimum: 75),spacing: 0
-                    )],
-                    spacing: 0
-                ) {
-                    ForEach(shapeSetGame.choices) { card in
-                        CardView(card: card)
-                            .padding(4)
-                            .onTapGesture {
-                                shapeSetGame.choose(card)
-                            }
+            AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
+                CardView(card: card)
+                    .padding(4)
+                    .onTapGesture {
+                        shapeSetGame.choose(card)
                     }
-                }
-            }
-            .animation(.default, value: shapeSetGame.choices)
+            }.animation(.default, value: shapeSetGame.choices)
             
             Spacer()
         }
     }
-    
 }
 
 struct CardView: View  {

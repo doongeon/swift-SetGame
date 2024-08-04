@@ -25,6 +25,8 @@ struct SetGame {
     }
     
     mutating func draw() -> Void {
+        if(deck.isEmpty) { return }
+        
         calculateCorrectSet()
         
         if(cheatSet.count != 0) {
@@ -54,14 +56,8 @@ struct SetGame {
                             choices.remove(at: setIndex)
                         }
                     }
+                    
                     score += 3
-                    
-                    for _ in 0..<3 {
-                        if let popedCard = deck.popLast() {
-                            choices.append(popedCard)
-                        }
-                    }
-                    
                 } else {
                     // wrong set
                     selectedCards.forEach { selectedCard in
