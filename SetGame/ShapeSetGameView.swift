@@ -12,14 +12,21 @@ struct ShapeSetGameView: View {
     
     var body: some View {
         VStack {
-            Text("Set Game")
-                .font(.largeTitle)
-            Text("Score: \(shapeSetGame.score)")
+            stat
             cards
             buttons
         }
         .padding()
         
+    }
+    
+    var stat: some View {
+        VStack(spacing: 5) {
+            Text("Set Game")
+                .font(.largeTitle)
+            Text("Score: \(shapeSetGame.score)")
+                .font(.title3)
+        }
     }
     
     var buttons: some View {
@@ -66,16 +73,18 @@ struct ShapeSetGameView: View {
     }
     
     var cards: some View {
-        Group {
-            AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
-                CardView(card: card)
-                    .padding(4)
-                    .onTapGesture {
-                        shapeSetGame.choose(card)
-                    }
-            }.animation(.default, value: shapeSetGame.choices)
-            
-            Spacer()
+        VStack {
+            Group {
+                AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
+                    CardView(card: card)
+                        .padding(10)
+                        .onTapGesture {
+                            shapeSetGame.choose(card)
+                        }
+                }
+                
+                Spacer()
+            }
         }
     }
 }
@@ -89,7 +98,7 @@ struct CardView: View  {
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+            RoundedRectangle(cornerRadius: 25.0)
                 .stroke(interpretCardColor(card.color), lineWidth: 2)
             
             RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
@@ -104,9 +113,8 @@ struct CardView: View  {
         }
         .font(.system(size: 100))
         .minimumScaleFactor(0.001)
-        .aspectRatio(2/3, contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+        .aspectRatio(2/3, contentMode: .fit)
         .foregroundColor(interpretCardColor(card.color))
-        .padding(4)
     }
     
     var cardContentView: some View {

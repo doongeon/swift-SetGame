@@ -58,6 +58,12 @@ struct SetGame {
                     }
                     
                     score += 3
+                    
+                    for _ in 0..<3 {
+                        if let popedCard = deck.popLast() {
+                            choices.append(popedCard)
+                        }
+                    }
                 } else {
                     // wrong set
                     selectedCards.forEach { selectedCard in
