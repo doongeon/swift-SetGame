@@ -74,9 +74,9 @@ struct ShapeCardView: View  {
     func shapeView(of shape: some Shape) -> some View {
         ZStack {
             shape.fill(card.shade == CardTheme.shades.blank ? Constants.Card.Background.base : interpretColor(card.color))
+                .opacity(card.shade == CardTheme.shades.blur ? Constants.Shape.blurOpacity : 1)
             shape.stroke(lineWidth: Constants.Shape.stroke)
         }
-        .opacity(card.shade == CardTheme.shades.blur ? Constants.Shape.blurOpacity : 1)
         .aspectRatio(Constants.Shape.aspectRatio, contentMode: .fit)
     }
     
