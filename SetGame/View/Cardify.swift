@@ -59,7 +59,10 @@ struct Cardify: ViewModifier {
         .foregroundColor(color)
         .padding(Constants.Card.padding)
         .rotationEffect(.degrees(isSet ? 360 : 0))
-        .animation(.easeIn, value: isSet)
+        .animation(.easeInOut(duration: 1), value: isSet)
+        .rotation3DEffect(
+            isSelected ? .degrees(360) : .zero, axis: (0,1,0)
+        )
     }
     
 }

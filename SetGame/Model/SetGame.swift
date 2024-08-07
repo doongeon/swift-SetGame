@@ -49,7 +49,11 @@ struct SetGame {
                 if let indexOfSettedCard = choices.firstIndex(where: { choice in
                     choice.id == card.id
                 }) {
-                    choices.remove(at: indexOfSettedCard)
+                    if let popedCard = deck.popLast() {
+                        choices[indexOfSettedCard] = popedCard
+                    } else {
+                        choices.remove(at: indexOfSettedCard)
+                    }
                 }
             }
             

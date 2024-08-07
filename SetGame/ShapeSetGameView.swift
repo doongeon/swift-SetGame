@@ -86,17 +86,13 @@ struct ShapeSetGameView: View {
     }
     
     var cards: some View {
-        Group {
-            AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
-                CardView(card)
-                    .onTapGesture {
-                        withAnimation {
-                            shapeSetGame.choose(card)
-                        }
+        AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
+            CardView(card)
+                .onTapGesture {
+                    withAnimation {
+                        shapeSetGame.choose(card)
                     }
-            }
-            
-            Spacer()
+                }
         }
     }
 }
