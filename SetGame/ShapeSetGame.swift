@@ -18,6 +18,14 @@ class ShapeSetGame: ObservableObject {
         self.setGame = SetGame(cardTheme.deckGenerator)
     }
     
+    var deck: Array<Card> {
+        setGame.deck
+    }
+    
+    var deckCount: Int {
+        setGame.deck.count
+    }
+    
     var choices: Array<Card> {
         setGame.choices
     }

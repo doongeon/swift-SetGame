@@ -9,9 +9,9 @@ import SwiftUI
 
 struct Cardify: ViewModifier {
     let color: Color
-    let isCheatSet: Bool 
-    let isSelected: Bool 
-    let isSet: Bool 
+    let isCheatSet: Bool
+    let isSelected: Bool
+    let isFaceUp: Bool
     
     private struct Constants {
         struct Card {
@@ -37,32 +37,39 @@ struct Cardify: ViewModifier {
         content: Content
     ) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: Constants.Card.cornerRadius)
-                .stroke(color, lineWidth: Constants.Card.Stroke.base)
+            let base = RoundedRectangle(cornerRadius: Constants.Card.cornerRadius)
+            base
+                .stroke(
+                    isFaceUp ? color : .gray,
+                    lineWidth: Constants.Card.Stroke.base
+                )
+                .shadow(
+                    color: /*@START_MENU_TOKEN@*/.black/*@END_MENU_TOKEN@*/.opacity(0.01),
+                    radius: 0, x: 0.001, y: 0.001
+                )
             
-            RoundedRectangle(cornerRadius: Constants.Card.cornerRadius)
+            base 
                 .fill(
                     isCheatSet ? Constants.Card.Background.cheat : Constants.Card.Background.base
                 )
                 .opacity(Constants.Card.Background.opacity)
             
-            RoundedRectangle(cornerRadius: Constants.Card.cornerRadius)
+            base
                 .stroke(.black, lineWidth: Constants.Card.Stroke.slected)
                 .opacity(isSelected ? 1 : 0)
             
             content
                 .padding()
+            
+            base
+                .fill(.indigo)
+                .opacity(isFaceUp ? 0 : 1)
         }
         .font(.system(size: Constants.Card.maxSize))
         .minimumScaleFactor(Constants.Card.minMaxRatio)
         .aspectRatio(Constants.Card.aspectRatio, contentMode: .fit)
         .foregroundColor(color)
         .padding(Constants.Card.padding)
-        .rotationEffect(.degrees(isSet ? 360 : 0))
-        .animation(.easeInOut(duration: 1), value: isSet)
-        .rotation3DEffect(
-            isSelected ? .degrees(360) : .zero, axis: (0,1,0)
-        )
     }
     
 }
@@ -72,14 +79,14 @@ extension View {
         color: Color,
         isCheatSet: Bool,
         isSelected: Bool,
-        isSet: Bool 
+        isFaceUp : Bool
     ) -> some View {
-       modifier(
+        modifier(
             Cardify(
                 color: color,
                 isCheatSet: isCheatSet,
                 isSelected: isSelected,
-                isSet: isSet
+                isFaceUp: isFaceUp
             )
         )
     }

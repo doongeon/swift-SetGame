@@ -37,7 +37,7 @@ struct CardView: View  {
                 color: interpretColor(card.color),
                 isCheatSet: card.isCheatSet,
                 isSelected: card.isSelected,
-                isSet: card.isSet
+                isFaceUp: card.isFaceUp
             )
         
     }

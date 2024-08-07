@@ -18,7 +18,8 @@ struct SetGame {
         self.choices = []
         
         for _ in 0..<12 {
-            if let popedCard = deck.popLast() {
+            if var popedCard = deck.popLast() {
+                popedCard.faceUp()
                 choices.append(popedCard)
             }
         }
@@ -29,15 +30,15 @@ struct SetGame {
         
         calculateCorrectSet()
         
-        if(cheatSet.count != 0) {
+        if(cheatSet.count > 0) {
             score -= 1
         }
         
         for _ in 0..<3 {
-            if let popedCard = deck.popLast() {
+            if var  popedCard = deck.popLast() {
+                popedCard.faceUp()
                 choices.append(popedCard)
             }
-            
         }
     }
     
@@ -62,7 +63,6 @@ struct SetGame {
                 }
             }
         }
-        
         print("there is no set")
     }
     
@@ -146,7 +146,7 @@ struct SetGame {
         ) {
             return true
         } else {
-//            print("color not set")
+            //            print("color not set")
             return false
         }
     }
@@ -164,7 +164,7 @@ struct SetGame {
         ) {
             return true
         } else {
-//            print("shade not set")
+            //            print("shade not set")
             return false
         }
     }
@@ -182,7 +182,7 @@ struct SetGame {
         ) {
             return true
         } else {
-//            print("content not set")
+            //            print("content not set")
             return false
         }
     }
@@ -200,7 +200,7 @@ struct SetGame {
         ) {
             return true
         } else {
-//            print("shape not set")
+            //            print("shape not set")
             return false
         }
     }
@@ -211,10 +211,15 @@ struct SetGame {
         let content: CardTheme.contents
         let shade: CardTheme.shades
         
+        var isFaceUp: Bool = false 
         var isCheatSet: Bool = false
         var isSet: Bool = false
         var isSelected: Bool = false
         
         var id: String
+        
+        mutating func faceUp() -> Void {
+            isFaceUp = true
+        }
     }
 }
