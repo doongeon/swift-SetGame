@@ -42,7 +42,21 @@ struct SetGame {
     
     mutating func choose(_ card: Card) -> Void {
         if let chosenIndex = choices.firstIndex(where: { $0.id == card.id }) {
+            choices[chosenIndex].isSelected.toggle()
+            
+            let settedCard = choices.filter({ $0.isSet })
+            settedCard.forEach { card in
+                if let indexOfSettedCard = choices.firstIndex(where: { choice in
+                    choice.id == card.id
+                }) {
+                    choices.remove(at: indexOfSettedCard)
+                }
+            }
+            
             let selectedCards = choices.filter({ $0.isSelected })
+            
+            
+            
             if selectedCards.count > 2 {
                 let isColorSet = checkColor(selectedCards: selectedCards)
                 let isContentSet = checkContent(selectedCards: selectedCards)
@@ -53,17 +67,12 @@ struct SetGame {
                     // correct set
                     selectedCards.forEach { selectedCard in
                         if let setIndex = choices.firstIndex(where: { choice in choice.id == selectedCard.id}) {
-                            choices.remove(at: setIndex)
+                            choices[setIndex].isSet = true;
                         }
                     }
                     
                     score += 3
                     
-                    for _ in 0..<3 {
-                        if let popedCard = deck.popLast() {
-                            choices.append(popedCard)
-                        }
-                    }
                 } else {
                     // wrong set
                     selectedCards.forEach { selectedCard in
@@ -75,7 +84,7 @@ struct SetGame {
                     score -= 1
                 }
             }
-            choices[chosenIndex].isSelected.toggle()
+            
         }
     }
     

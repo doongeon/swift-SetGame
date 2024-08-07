@@ -8,6 +8,8 @@
 import Foundation
 
 class ShapeSetGame: ObservableObject {
+    typealias Card = SetGame.Card
+    
     private var cardTheme: CardTheme
     @Published private var setGame: SetGame
     
@@ -16,7 +18,7 @@ class ShapeSetGame: ObservableObject {
         self.setGame = SetGame(cardTheme.deckGenerator)
     }
     
-    var choices: Array<SetGame.Card> {
+    var choices: Array<Card> {
         setGame.choices
     }
     
@@ -42,7 +44,7 @@ class ShapeSetGame: ObservableObject {
         setGame.draw()
     }
     
-    func choose(_ card: SetGame.Card) {
+    func choose(_ card: Card) {
         setGame.choose(card)
     }
     

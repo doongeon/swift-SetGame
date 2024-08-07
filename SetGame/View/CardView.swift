@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ShapeCardView: View  {
-    let card: SetGame.Card 
+struct CardView: View  {
+    let card: SetGame.Card
     
     init(_ card: SetGame.Card) {
         self.card = card
@@ -36,8 +36,10 @@ struct ShapeCardView: View  {
             .cardify(
                 color: interpretColor(card.color),
                 isCheatSet: card.isCheatSet,
-                isSelected: card.isSelected
+                isSelected: card.isSelected,
+                isSet: card.isSet
             )
+        
     }
     
     var cardContentView: some View {
@@ -154,10 +156,10 @@ struct Triangle: Shape {
     }
 }
 
-#Preview {
+#Preview { 
     return VStack() {
         HStack() {
-            ShapeCardView(
+            CardView(
                 SetGame.Card(
                     color: CardTheme.colors.blue,
                     numOfShape: CardTheme.numOfShape.one,
@@ -166,7 +168,7 @@ struct Triangle: Shape {
                     id: "1"
                 )
             )
-            ShapeCardView(
+            CardView(
                 SetGame.Card(
                     color: CardTheme.colors.blue,
                     numOfShape: CardTheme.numOfShape.two,
@@ -177,7 +179,7 @@ struct Triangle: Shape {
             )
         }
         HStack() {
-            ShapeCardView(
+            CardView(
                 SetGame.Card(
                     color: CardTheme.colors.red,
                     numOfShape: CardTheme.numOfShape.one,
@@ -186,7 +188,7 @@ struct Triangle: Shape {
                     id: "3"
                 )
             )
-            ShapeCardView(
+            CardView(
                 SetGame.Card(
                     color: CardTheme.colors.red,
                     numOfShape: CardTheme.numOfShape.two,
@@ -195,7 +197,7 @@ struct Triangle: Shape {
                     id: "4"
                 )
             )
-            ShapeCardView(
+            CardView(
                 SetGame.Card(
                     color: CardTheme.colors.red,
                     numOfShape: CardTheme.numOfShape.two,

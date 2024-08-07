@@ -11,6 +11,7 @@ struct Cardify: ViewModifier {
     let color: Color
     let isCheatSet: Bool 
     let isSelected: Bool 
+    let isSet: Bool 
     
     private struct Constants {
         struct Card {
@@ -57,6 +58,8 @@ struct Cardify: ViewModifier {
         .aspectRatio(Constants.Card.aspectRatio, contentMode: .fit)
         .foregroundColor(color)
         .padding(Constants.Card.padding)
+        .rotationEffect(.degrees(isSet ? 360 : 0))
+        .animation(.easeIn, value: isSet)
     }
     
 }
@@ -65,13 +68,15 @@ extension View {
     func cardify(
         color: Color,
         isCheatSet: Bool,
-        isSelected: Bool 
+        isSelected: Bool,
+        isSet: Bool 
     ) -> some View {
        modifier(
             Cardify(
                 color: color,
                 isCheatSet: isCheatSet,
-                isSelected: isSelected
+                isSelected: isSelected,
+                isSet: isSet
             )
         )
     }

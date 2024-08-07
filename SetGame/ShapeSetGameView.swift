@@ -39,18 +39,27 @@ struct ShapeSetGameView: View {
     }
     
     var drawButton: some View {
-        Button(action: {shapeSetGame.draw()}, label: {
-            VStack(spacing: 5) {
-                Image(systemName: "arrow.turn.up.forward.iphone")
-                    .font(.title)
-                    .imageScale(.large)
-                Text("Draw")
-            }
-        })
+        Button(
+            action: {
+                withAnimation() {
+                    shapeSetGame.draw()
+                }
+            }, label: {
+                VStack(spacing: 5) {
+                    Image(systemName: "arrow.turn.up.forward.iphone")
+                        .font(.title)
+                        .imageScale(.large)
+                    Text("Draw")
+                }
+            })
     }
     
     var newgameButton: some View {
-        Button(action: {shapeSetGame.newGame()}, label: {
+        Button(action: {
+            withAnimation {
+                shapeSetGame.newGame()
+            }
+        }, label: {
             VStack(spacing: 5) {
                 Image(systemName: "gamecontroller")
                     .font(.title)
@@ -61,7 +70,11 @@ struct ShapeSetGameView: View {
     }
     
     var cheatButton: some View {
-        Button(action: {shapeSetGame.cheat()}, label: {
+        Button(action: {
+            withAnimation {
+                shapeSetGame.cheat()
+            }
+        }, label: {
             VStack(spacing: 5) {
                 Image(systemName: "warninglight")
                     .font(.title)
@@ -73,17 +86,17 @@ struct ShapeSetGameView: View {
     }
     
     var cards: some View {
-        VStack {
-            Group {
-                AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
-                    ShapeCardView(card)
-                        .onTapGesture {
+        Group {
+            AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
+                CardView(card)
+                    .onTapGesture {
+                        withAnimation {
                             shapeSetGame.choose(card)
                         }
-                }
-                
-                Spacer()
+                    }
             }
+            
+            Spacer()
         }
     }
 }

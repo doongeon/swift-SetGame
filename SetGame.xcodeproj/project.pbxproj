@@ -15,7 +15,7 @@
 		76CBC9822C59E16700097C2E /* ShapeSetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CBC9812C59E16700097C2E /* ShapeSetGame.swift */; };
 		76CBC9842C59E2AD00097C2E /* CardTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76CBC9832C59E2AD00097C2E /* CardTheme.swift */; };
 		76D917EF2C5F0F0B00A0A2A0 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76D917EE2C5F0F0B00A0A2A0 /* AspectVGrid.swift */; };
-		76D917F12C61E6F100A0A2A0 /* ShapeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76D917F02C61E6F100A0A2A0 /* ShapeCardView.swift */; };
+		76D917F12C61E6F100A0A2A0 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76D917F02C61E6F100A0A2A0 /* CardView.swift */; };
 		76D917F52C61FBE200A0A2A0 /* Cardify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76D917F42C61FBE200A0A2A0 /* Cardify.swift */; };
 /* End PBXBuildFile section */
 
@@ -29,7 +29,7 @@
 		76CBC9812C59E16700097C2E /* ShapeSetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSetGame.swift; sourceTree = "<group>"; };
 		76CBC9832C59E2AD00097C2E /* CardTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTheme.swift; sourceTree = "<group>"; };
 		76D917EE2C5F0F0B00A0A2A0 /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
-		76D917F02C61E6F100A0A2A0 /* ShapeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeCardView.swift; sourceTree = "<group>"; };
+		76D917F02C61E6F100A0A2A0 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		76D917F42C61FBE200A0A2A0 /* Cardify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cardify.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -95,7 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				76D917EE2C5F0F0B00A0A2A0 /* AspectVGrid.swift */,
-				76D917F02C61E6F100A0A2A0 /* ShapeCardView.swift */,
+				76D917F02C61E6F100A0A2A0 /* CardView.swift */,
 				76D917F42C61FBE200A0A2A0 /* Cardify.swift */,
 			);
 			path = View;
@@ -171,7 +171,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76D917F12C61E6F100A0A2A0 /* ShapeCardView.swift in Sources */,
+				76D917F12C61E6F100A0A2A0 /* CardView.swift in Sources */,
 				76CBC9742C59DA6F00097C2E /* ShapeSetGameView.swift in Sources */,
 				76D917F52C61FBE200A0A2A0 /* Cardify.swift in Sources */,
 				76CBC9722C59DA6F00097C2E /* SetGameApp.swift in Sources */,

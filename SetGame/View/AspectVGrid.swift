@@ -31,7 +31,6 @@ struct AspectVGrid<Item: Identifiable & Equatable, ItemView: View>: View {
                         .aspectRatio(aspectRatio, contentMode: .fit)
                 }
             }
-            .animation(.default, value: items)
         }
     }
     
