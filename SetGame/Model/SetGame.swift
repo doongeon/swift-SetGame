@@ -37,57 +37,6 @@ struct SetGame {
             if let popedCard = deck.popLast() {
                 choices.append(popedCard)
             }
-        }
-    }
-    
-    mutating func choose(_ card: Card) -> Void {
-        if let chosenIndex = choices.firstIndex(where: { $0.id == card.id }) {
-            choices[chosenIndex].isSelected.toggle()
-            
-            let settedCard = choices.filter({ $0.isSet })
-            settedCard.forEach { card in
-                if let indexOfSettedCard = choices.firstIndex(where: { choice in
-                    choice.id == card.id
-                }) {
-                    if let popedCard = deck.popLast() {
-                        choices[indexOfSettedCard] = popedCard
-                    } else {
-                        choices.remove(at: indexOfSettedCard)
-                    }
-                }
-            }
-            
-            let selectedCards = choices.filter({ $0.isSelected })
-            
-            
-            
-            if selectedCards.count > 2 {
-                let isColorSet = checkColor(selectedCards: selectedCards)
-                let isContentSet = checkContent(selectedCards: selectedCards)
-                let isNumOfShapeSet = checkNumOfShape(selectedCards: selectedCards)
-                let isShadeSet = checkShade(selectedCards: selectedCards)
-                
-                if (isColorSet && isContentSet && isNumOfShapeSet && isShadeSet) {
-                    // correct set
-                    selectedCards.forEach { selectedCard in
-                        if let setIndex = choices.firstIndex(where: { choice in choice.id == selectedCard.id}) {
-                            choices[setIndex].isSet = true;
-                        }
-                    }
-                    
-                    score += 3
-                    
-                } else {
-                    // wrong set
-                    selectedCards.forEach { selectedCard in
-                        if let setIndex = choices.firstIndex(where: { choice in choice.id == selectedCard.id}) {
-                            choices[setIndex].isSelected = false
-                        }
-                    }
-                    
-                    score -= 1
-                }
-            }
             
         }
     }
@@ -106,14 +55,7 @@ struct SetGame {
         for i in 0..<choices.count {
             for j in (i+1)..<choices.count {
                 for k in (j+1)..<choices.count {
-                    let tempSet = [choices[i], choices[j], choices[k]]
-                    
-                    let isColorSet = checkColor(selectedCards: tempSet)
-                    let isContentSet = checkContent(selectedCards: tempSet)
-                    let isNumOfShapeSet = checkNumOfShape(selectedCards: tempSet)
-                    let isShadeSet = checkShade(selectedCards: tempSet)
-                    
-                    if (isColorSet && isContentSet && isNumOfShapeSet && isShadeSet) {
+                    if isValidateSet([choices[i], choices[j], choices[k]]) {
                         cheatSet = [i, j, k]
                         return
                     }
@@ -122,6 +64,73 @@ struct SetGame {
         }
         
         print("there is no set")
+    }
+    
+    mutating func choose(_ card: Card) -> Void {
+        if let chosenIndex = choices.firstIndex(where: { $0.id == card.id }) {
+            choices[chosenIndex].isSelected.toggle()
+            eraseSettedCards()
+            let selectedCards = choices.filter({ $0.isSelected })
+            validate (selectedCards)
+        }
+    }
+    
+    mutating func validate (_ selectedCards: Array<Card>) -> Void {
+        if selectedCards.count < 3 { return }
+            
+        if (isValidateSet(selectedCards)) {
+            // set is correct
+            markMatch()
+            score += 3
+        } else {
+            // set is wrong
+            clearSelection()
+            score -= 1
+        }
+        
+        func markMatch() -> Void {
+            selectedCards.forEach { selectedCard in
+                if let setIndex = choices.firstIndex(where: { choice in choice.id == selectedCard.id}) {
+                    choices[setIndex].isSet = true;
+                }
+            }
+        }
+        
+        func clearSelection() -> Void {
+            selectedCards.forEach { selectedCard in
+                if let setIndex = choices.firstIndex(where: { choice in choice.id == selectedCard.id}) {
+                    choices[setIndex].isSelected = false
+                }
+            }
+        }
+    }
+    
+    mutating private func eraseSettedCards() -> Void {
+        let settedCard = choices.filter({ $0.isSet })
+        settedCard.forEach { card in
+            if let indexOfSettedCard = choices.firstIndex(where: { choice in
+                choice.id == card.id
+            }) {
+                if let popedCard = deck.popLast() {
+                    choices[indexOfSettedCard] = popedCard
+                } else {
+                    choices.remove(at: indexOfSettedCard)
+                }
+            }
+        }
+    }
+    
+    private func isValidateSet(_ selectedCards: Array<Card>) -> Bool {
+        let isColorSet = checkColor(selectedCards: selectedCards)
+        let isContentSet = checkContent(selectedCards: selectedCards)
+        let isNumOfShapeSet = checkNumOfShape(selectedCards: selectedCards)
+        let isShadeSet = checkShade(selectedCards: selectedCards)
+        
+        if (isColorSet && isContentSet && isNumOfShapeSet && isShadeSet) {
+            return true
+        } else  {
+            return false
+        }
     }
     
     private func checkColor(selectedCards: Array<Card>) -> Bool {
