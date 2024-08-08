@@ -82,7 +82,6 @@ struct Cardify: ViewModifier, Animatable {
         .font(.system(size: Constants.Card.maxSize))
         .minimumScaleFactor(Constants.Card.minMaxRatio)
         .aspectRatio(Constants.Card.aspectRatio, contentMode: .fit)
-        .padding(Constants.Card.padding)
         .rotation3DEffect(
             .degrees(rotation),axis: /*@START_MENU_TOKEN@*/(x: 0.0, y: 1.0, z: 0.0)/*@END_MENU_TOKEN@*/
         )

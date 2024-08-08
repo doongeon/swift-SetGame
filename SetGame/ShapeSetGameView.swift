@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ShapeSetGameView: View {
+    typealias Card = SetGame.Card
     @ObservedObject var shapeSetGame = ShapeSetGame()
     
     var body: some View {
@@ -22,11 +23,20 @@ struct ShapeSetGameView: View {
     
     var stat: some View {
         VStack(spacing: 5) {
-            Text("Set Game")
-                .font(.largeTitle)
-            Text("Score: \(shapeSetGame.score)")
-                .font(.title3)
+            title
+            score
         }
+    }
+    
+    var title: some View  {
+        Text("Set Game")
+            .font(.largeTitle)
+    }
+    
+    var score: some View  {
+        Text("Score: \(shapeSetGame.score)")
+            .font(.title3)
+            .animation(nil)
     }
     
     var buttons: some View {
@@ -88,12 +98,37 @@ struct ShapeSetGameView: View {
     var cards: some View {
         AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
             CardView(card)
+                .padding(5)
+                .overlay(FlyingNumber(number: scoreChange(by: card)))
+                .zIndex(scoreChange(by: card) != 0 ? 1 : 0)
                 .onTapGesture {
-                    withAnimation {
-                        shapeSetGame.choose(card)
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        choose(card: card)
                     }
                 }
         }
+    }
+    
+    func choose(card: Card ) -> Void {
+        let scoreBeforeChoosing = shapeSetGame.score
+        shapeSetGame.choose(card)
+        let scoreChange = shapeSetGame.score - scoreBeforeChoosing
+        lastScoreChange = (scoreChange , causeBy: card.id)
+    }
+    
+    @State private var lastScoreChange = (0, causeBy: "")
+    
+    func scoreChange(by card: Card ) -> Int  {
+        let (amount, id ) = lastScoreChange
+        if card.id == id {
+            print(amount)
+//            print("card id: \(card.id)")
+//            print("cased id: \(id)")
+        } else {
+            print(0)
+        }
+        
+        return card.id == id ? amount : 0
     }
 }
 
