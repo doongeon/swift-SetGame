@@ -7,11 +7,27 @@
 
 import SwiftUI
 
-struct Cardify: ViewModifier {
-    let color: Color
+struct Cardify: ViewModifier, Animatable {
     let isCheatSet: Bool
     let isSelected: Bool
-    let isFaceUp: Bool
+    var isFaceUp: Bool {
+        rotation < 90 || rotation > 270
+    }
+    var rotation: Double
+    var animatableData: Double {
+        get { rotation }
+        set { rotation = newValue }
+    }
+    
+    init(isFaceUp: Bool, isCheatSet: Bool, isSelected: Bool) {
+        self.isCheatSet = isCheatSet
+        self.isSelected = isSelected
+        if isFaceUp {
+            rotation  = isSelected ? 0 : 360
+        } else {
+            rotation = 180
+        }
+    }
     
     private struct Constants {
         struct Card {
@@ -38,55 +54,53 @@ struct Cardify: ViewModifier {
     ) -> some View {
         ZStack {
             let base = RoundedRectangle(cornerRadius: Constants.Card.cornerRadius)
+            
             base
-                .stroke(
-                    isFaceUp ? color : .gray,
-                    lineWidth: Constants.Card.Stroke.base
-                )
-                .shadow(
-                    color: /*@START_MENU_TOKEN@*/.black/*@END_MENU_TOKEN@*/.opacity(0.01),
-                    radius: 0, x: 0.001, y: 0.001
-                )
+                .stroke(lineWidth: 3)
             
             base 
-                .fill(
-                    isCheatSet ? Constants.Card.Background.cheat : Constants.Card.Background.base
-                )
-                .opacity(Constants.Card.Background.opacity)
+                .fill(Constants.Card.Background.base)
             
             base
-                .stroke(.black, lineWidth: Constants.Card.Stroke.slected)
+                .fill(Constants.Card.Background.cheat)
+                .opacity(isCheatSet ? 0.3 : 0)
+            
+            base
+                .stroke(
+                    .orange,
+                    lineWidth: Constants.Card.Stroke.slected
+                )
                 .opacity(isSelected ? 1 : 0)
             
             content
                 .padding()
             
             base
-                .fill(.indigo)
+                .fill(.orange)
                 .opacity(isFaceUp ? 0 : 1)
         }
         .font(.system(size: Constants.Card.maxSize))
         .minimumScaleFactor(Constants.Card.minMaxRatio)
         .aspectRatio(Constants.Card.aspectRatio, contentMode: .fit)
-        .foregroundColor(color)
         .padding(Constants.Card.padding)
+        .rotation3DEffect(
+            .degrees(rotation),axis: /*@START_MENU_TOKEN@*/(x: 0.0, y: 1.0, z: 0.0)/*@END_MENU_TOKEN@*/
+        )
     }
     
 }
 
 extension View {
     func cardify(
-        color: Color,
-        isCheatSet: Bool,
+        isFaceUp : Bool,
         isSelected: Bool,
-        isFaceUp : Bool
+        isCheatSet: Bool
     ) -> some View {
         modifier(
             Cardify(
-                color: color,
+                isFaceUp: isFaceUp,
                 isCheatSet: isCheatSet,
-                isSelected: isSelected,
-                isFaceUp: isFaceUp
+                isSelected: isSelected
             )
         )
     }

@@ -14,35 +14,19 @@ struct CardView: View  {
         self.card = card
     }
     
-    private struct Constants {
-        static let shapeGap: CGFloat = 5
-        struct Card {
-            struct Background {
-                static let base: Color = .white
-            }
-        }
-        struct Shape {
-            static let aspectRatio: CGFloat = 2/1
-            static let stroke: CGFloat = 2
-            static let blurOpacity: CGFloat = 0.3
-        }
-    }
-    
     var body: some View {
-        Pie(endAngle: .degrees(270), clockwise: true )
-            .fill(.gray)
-            .opacity(0.3)
-            .overlay(cardContentView)
+        cardContent
             .cardify(
-                color: interpretColor(card.color),
-                isCheatSet: card.isCheatSet,
+                isFaceUp : card.isFaceUp,
                 isSelected: card.isSelected,
-                isFaceUp: card.isFaceUp
+                isCheatSet: card.isCheatSet
             )
-        
+            .foregroundColor(interpretColor(card.color))
+            .rotationEffect(card.isSet ? .degrees(360) : .zero)
+            .animation(.easeInOut(duration: 1), value: card.isSet)
     }
     
-    var cardContentView: some View {
+    var cardContent: some View {
         VStack(spacing: Constants.shapeGap) {
             switch(card.numOfShape) {
             case CardTheme.numOfShape.one:
@@ -65,18 +49,26 @@ struct CardView: View  {
     var shape: some View {
         switch(card.content) {
         case CardTheme.contents.triangle:
-            shapeView(of: Triangle())
+            applyShade(on : Triangle())
         case CardTheme.contents.diamond:
-            shapeView(of: Diamond())
+            applyShade(on : Diamond())
         case CardTheme.contents.circle:
-            shapeView(of: Circle())
+            applyShade(on: Circle())
         }
     }
     
-    func shapeView(of shape: some Shape) -> some View {
+    func applyShade(on shape: some Shape) -> some View {
         ZStack {
-            shape.fill(card.shade == CardTheme.shades.blank ? Constants.Card.Background.base : interpretColor(card.color))
-                .opacity(card.shade == CardTheme.shades.blur ? Constants.Shape.blurOpacity : 1)
+            shape
+                .fill()
+                .opacity(
+                    card.shade == CardTheme.shades.blur ?
+                    Constants.Shape.blurOpacity : 1
+                )
+                .opacity(
+                    card.shade == CardTheme.shades.blank ?
+                    0 : 1
+                )
             shape.stroke(lineWidth: Constants.Shape.stroke)
         }
         .aspectRatio(Constants.Shape.aspectRatio, contentMode: .fit)
@@ -92,6 +84,21 @@ struct CardView: View  {
             return .blue
         }
     }
+    
+    private struct Constants {
+        static let shapeGap: CGFloat = 5
+        struct Card {
+            struct Background {
+                static let base: Color = .white
+            }
+        }
+        struct Shape {
+            static let aspectRatio: CGFloat = 2/1
+            static let stroke: CGFloat = 2
+            static let blurOpacity: CGFloat = 0.3
+        }
+    }
+    
 }
 
 struct Pie: Shape {
@@ -132,13 +139,13 @@ struct Pie: Shape {
 struct Diamond: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-
+        
         path.move(to: CGPoint(x: rect.midX, y: rect.minY))
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
         path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
         path.addLine(to: CGPoint(x: rect.minX, y: rect.midY))
         path.closeSubpath()
-
+        
         return path
     }
 }
@@ -146,25 +153,26 @@ struct Diamond: Shape {
 struct Triangle: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-
+        
         path.move(to: CGPoint(x: rect.midX, y: rect.minY))
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
         path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
         path.closeSubpath()
-
+        
         return path
     }
 }
 
-#Preview { 
+#Preview {
     return VStack() {
         HStack() {
             CardView(
                 SetGame.Card(
-                    color: CardTheme.colors.blue,
+                    color: CardTheme.colors.green,
                     numOfShape: CardTheme.numOfShape.one,
                     content: CardTheme.contents.triangle,
                     shade: CardTheme.shades.blank,
+                    isFaceUp: true ,
                     id: "1"
                 )
             )
@@ -174,36 +182,8 @@ struct Triangle: Shape {
                     numOfShape: CardTheme.numOfShape.two,
                     content: CardTheme.contents.triangle,
                     shade: CardTheme.shades.blank,
+                    isFaceUp: true ,
                     id: "2"
-                )
-            )
-        }
-        HStack() {
-            CardView(
-                SetGame.Card(
-                    color: CardTheme.colors.red,
-                    numOfShape: CardTheme.numOfShape.one,
-                    content: CardTheme.contents.diamond,
-                    shade: CardTheme.shades.blank,
-                    id: "3"
-                )
-            )
-            CardView(
-                SetGame.Card(
-                    color: CardTheme.colors.red,
-                    numOfShape: CardTheme.numOfShape.two,
-                    content: CardTheme.contents.circle,
-                    shade: CardTheme.shades.blank,
-                    id: "4"
-                )
-            )
-            CardView(
-                SetGame.Card(
-                    color: CardTheme.colors.red,
-                    numOfShape: CardTheme.numOfShape.two,
-                    content: CardTheme.contents.circle,
-                    shade: CardTheme.shades.blank,
-                    id: "4"
                 )
             )
         }
