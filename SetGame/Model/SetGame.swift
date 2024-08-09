@@ -18,15 +18,14 @@ struct SetGame {
         self.choices = []
         
         for _ in 0..<12 {
-            if var popedCard = deck.popLast() {
-                popedCard.faceUp()
+            if let popedCard = deck.popLast() {
                 choices.append(popedCard)
             }
         }
     }
     
-    mutating func draw() -> Void {
-        if(deck.isEmpty) { return }
+    mutating func draw() -> Array<Card.ID> {
+        if(deck.isEmpty) { return [] }
         
         calculateCorrectSet()
         
@@ -34,12 +33,16 @@ struct SetGame {
             score -= 1
         }
         
+        var drawCards: Array<Card.ID> = []
+        
         for _ in 0..<3 {
-            if var  popedCard = deck.popLast() {
-                popedCard.faceUp()
+            if let popedCard = deck.popLast() {
                 choices.append(popedCard)
+                drawCards.append(popedCard.id)
             }
         }
+        
+        return drawCards
     }
     
     mutating func cheat() -> Void {
@@ -66,12 +69,21 @@ struct SetGame {
         print("there is no set")
     }
     
-    mutating func choose(_ card: Card) -> Void {
+    mutating func choose(_ card: Card) -> Array<Card.ID> {
         if let chosenIndex = choices.firstIndex(where: { $0.id == card.id }) {
             choices[chosenIndex].isSelected.toggle()
-            eraseSettedCards()
+            let popedCards = eraseSettedCards()
             let selectedCards = choices.filter({ $0.isSelected })
             validate (selectedCards)
+            
+            return popedCards
+        }
+        return []
+    }
+    
+    mutating func faceUp(card: Card) -> Void {
+        if let indexOfCard = choices.firstIndex (where: { $0.id == card.id }) {
+            choices[indexOfCard].isFaceUp = true
         }
     }
     
@@ -105,20 +117,23 @@ struct SetGame {
         }
     }
     
-    mutating private func eraseSettedCards() -> Void {
+    mutating private func eraseSettedCards() -> Array<Card.ID> {
         let settedCard = choices.filter({ $0.isSet })
+        var popedCards : Array<Card.ID> = []
         settedCard.forEach { card in
             if let indexOfSettedCard = choices.firstIndex(where: { choice in
                 choice.id == card.id
             }) {
-                if var popedCard = deck.popLast() {
-                    popedCard.faceUp()
+                if let popedCard = deck.popLast() {
+                    popedCards.append(popedCard.id)
                     choices[indexOfSettedCard] = popedCard
                 } else {
                     choices.remove(at: indexOfSettedCard)
                 }
             }
         }
+        
+        return popedCards
     }
     
     private func isValidateSet(_ selectedCards: Array<Card>) -> Bool {
@@ -217,10 +232,6 @@ struct SetGame {
         var isSet: Bool = false
         var isSelected: Bool = false
         
-        var id: String
-        
-        mutating func faceUp() -> Void {
-            isFaceUp = true
-        }
+        let id: String
     }
 }

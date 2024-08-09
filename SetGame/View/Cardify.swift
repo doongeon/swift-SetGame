@@ -31,7 +31,7 @@ struct Cardify: ViewModifier, Animatable {
     
     private struct Constants {
         struct Card {
-            static let cornerRadius = 25.0
+            static let cornerRadius = 15.0
             static let maxSize: CGFloat = 200
             static let minSize: CGFloat = 10
             static let minMaxRatio = minSize / maxSize
@@ -57,6 +57,7 @@ struct Cardify: ViewModifier, Animatable {
             
             base
                 .stroke(lineWidth: 3)
+                .opacity(isFaceUp ? 1 : 0)
             
             base 
                 .fill(Constants.Card.Background.base)

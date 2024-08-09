@@ -42,6 +42,7 @@ struct CardTheme {
                                 numOfShape: num,
                                 content: content,
                                 shade: shade,
+                                isFaceUp: false,
                                 id: "\(shade) \(color) \(content) * \(num )"
                             )
                         )

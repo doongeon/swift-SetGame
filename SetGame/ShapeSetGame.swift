@@ -48,15 +48,19 @@ class ShapeSetGame: ObservableObject {
         self.setGame = SetGame(cardTheme.deckGenerator)
     }
     
-    func draw() {
+    func draw() -> Array<Card.ID> {
         setGame.draw()
     }
     
-    func choose(_ card: Card) {
+    func choose(_ card: Card) -> Array<Card.ID> {
         setGame.choose(card)
     }
     
     func cheat() -> Void  {
         setGame.cheat()
+    }
+    
+    func faceUp(card: Card) -> Void {
+        setGame.faceUp(card: card)
     }
 }
