@@ -31,7 +31,6 @@ struct CardTheme {
     
     func deckGenerator() -> Array<SetGame.Card> {
         var result:Array<SetGame.Card> = []
-        
         for color in colors.allCases {
             for content in contents.allCases {
                 for shade in shades.allCases {
@@ -50,9 +49,7 @@ struct CardTheme {
                 }
             }
         }
-        
         return result.shuffled()
     }
-    
     
 }

@@ -10,18 +10,43 @@ import Foundation
 struct SetGame {
     private(set) var score: Int = 0
     private(set) var deck: Array<Card>
-    private(set) var choices: Array<Card>
+    private(set) var hand: Array<Card>
     private(set) var cheatSet: Array<Int> = []
+    private(set) var dummy: Array<Card> = []
     
     init(_ deckGenerator: () -> Array<Card>) {
         self.deck = deckGenerator()
-        self.choices = []
-        
+        self.hand = []
+    }
+    
+    mutating func firstDeal() -> Void {
         for _ in 0..<12 {
-            if let popedCard = deck.popLast() {
-                choices.append(popedCard)
+            if let  popedCard = deck.popLast() {
+                hand.append(popedCard)
             }
         }
+    }
+    
+    mutating func faceUp(card: Card) -> Void {
+        if let indexOfCard = hand.firstIndex(where: {$0.id == card.id}) {
+            hand[indexOfCard].isFaceUp = true 
+        }
+    }
+    
+    mutating func faceDown(card: Card) -> Void {
+        if let indexOfCard = hand.firstIndex(where: {$0.id == card.id}) {
+            hand[indexOfCard].isFaceUp = false
+        }
+    }
+    
+    mutating func shuffle() -> Void {
+        while !hand.isEmpty {
+            deck.append(hand.popLast()!)
+        }
+        while !dummy.isEmpty {
+            deck.append(dummy.popLast()!)
+        }
+        deck.shuffle()
     }
     
     mutating func draw() -> Array<Card.ID> {
@@ -33,58 +58,52 @@ struct SetGame {
             score -= 1
         }
         
-        var drawCards: Array<Card.ID> = []
+        var result: Array<Card.ID> = []
         
         for _ in 0..<3 {
             if let popedCard = deck.popLast() {
-                choices.append(popedCard)
-                drawCards.append(popedCard.id)
+                hand.append(popedCard)
+                result.append(popedCard.id)
             }
         }
         
-        return drawCards
+        return result
     }
     
     mutating func cheat() -> Void {
         calculateCorrectSet()
-        
         if(cheatSet.count != 0) {
-            cheatSet.forEach({index in choices[index].isCheatSet = true })
+            cheatSet.forEach({index in hand[index].isCheatSet = true })
         }
     }
     
     private mutating func calculateCorrectSet() -> Void {
         cheatSet = []
         
-        for i in 0..<choices.count {
-            for j in (i+1)..<choices.count {
-                for k in (j+1)..<choices.count {
-                    if isValidateSet([choices[i], choices[j], choices[k]]) {
+        for i in 0..<hand.count {
+            for j in (i+1)..<hand.count {
+                for k in (j+1)..<hand.count {
+                    if isValidateSet([hand[i], hand[j], hand[k]]) {
                         cheatSet = [i, j, k]
                         return
                     }
                 }
             }
         }
-        print("there is no set")
+        
+//        print("there is no set")
     }
     
     mutating func choose(_ card: Card) -> Array<Card.ID> {
-        if let chosenIndex = choices.firstIndex(where: { $0.id == card.id }) {
-            choices[chosenIndex].isSelected.toggle()
+        if let chosenIndex = hand.firstIndex(where: { $0.id == card.id }) {
+            hand[chosenIndex].isSelected.toggle()
             let popedCards = eraseSettedCards()
-            let selectedCards = choices.filter({ $0.isSelected })
+            let selectedCards = hand.filter({ $0.isSelected })
             validate (selectedCards)
             
             return popedCards
         }
         return []
-    }
-    
-    mutating func faceUp(card: Card) -> Void {
-        if let indexOfCard = choices.firstIndex (where: { $0.id == card.id }) {
-            choices[indexOfCard].isFaceUp = true
-        }
     }
     
     mutating func validate (_ selectedCards: Array<Card>) -> Void {
@@ -102,35 +121,38 @@ struct SetGame {
         
         func markMatch() -> Void {
             selectedCards.forEach { selectedCard in
-                if let setIndex = choices.firstIndex(where: { choice in choice.id == selectedCard.id}) {
-                    choices[setIndex].isSet = true;
+                if let setIndex = hand.firstIndex(where: { choice in choice.id == selectedCard.id}) {
+                    hand[setIndex].isSet = true;
                 }
             }
         }
         
         func clearSelection() -> Void {
             selectedCards.forEach { selectedCard in
-                if let setIndex = choices.firstIndex(where: { choice in choice.id == selectedCard.id}) {
-                    choices[setIndex].isSelected = false
+                if let setIndex = hand.firstIndex(where: { choice in choice.id == selectedCard.id}) {
+                    hand[setIndex].isSelected = false
                 }
             }
         }
     }
     
     mutating private func eraseSettedCards() -> Array<Card.ID> {
-        let settedCard = choices.filter({ $0.isSet })
+        let settedCard = hand.filter({ $0.isSet })
         var popedCards : Array<Card.ID> = []
         settedCard.forEach { card in
-            if let indexOfSettedCard = choices.firstIndex(where: { choice in
+            if let indexOfSettedCard = hand.firstIndex(where: { choice in
                 choice.id == card.id
             }) {
-                if let popedCard = deck.popLast() {
+                if var popedCard = deck.popLast() {
+                    popedCard.isFaceUp = true
                     popedCards.append(popedCard.id)
-                    choices[indexOfSettedCard] = popedCard
+                    dummy.append(hand[indexOfSettedCard].dummify())
+                    hand[indexOfSettedCard] = popedCard
                 } else {
-                    choices.remove(at: indexOfSettedCard)
+                    hand.remove(at: indexOfSettedCard)
                 }
             }
+            
         }
         
         return popedCards
@@ -233,5 +255,23 @@ struct SetGame {
         var isSelected: Bool = false
         
         let id: String
+        
+        mutating func dummify() -> Card  {
+            isFaceUp = true
+            isCheatSet = false
+            isSet = true 
+            isSelected = false
+            
+            return self
+        }
+        
+        mutating func reset() -> Card  {
+            isFaceUp = false
+            isCheatSet = false
+            isSet = false
+            isSelected = false
+            
+            return self
+        }
     }
 }

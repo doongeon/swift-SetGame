@@ -11,6 +11,11 @@ struct ShapeSetGameView: View {
     typealias Card = SetGame.Card
     @ObservedObject var shapeSetGame = ShapeSetGame()
     
+    @Namespace private var dealingNameSpace
+    
+    private let cardWidth: CGFloat = 50
+    private let dealDelay: TimeInterval = 0.1
+    
     var body: some View {
         VStack {
             stat
@@ -23,14 +28,40 @@ struct ShapeSetGameView: View {
     
     var stat: some View {
         VStack(spacing: 5) {
-            title
-            score
+            HStack(alignment: .center) {
+                deck
+                Spacer()
+                score
+                Spacer()
+                dummy
+            }
         }
     }
     
-    var title: some View  {
-        Text("Set Game")
-            .font(.largeTitle)
+    var dummy: some View {
+        ZStack {
+            var degree: Double  = 0
+            var rotation: Double {
+                get {
+                    if degree > 5 {
+                        degree = -10
+                    } else {
+                        degree += 2
+                    }
+                    return degree
+                }
+                set { degree = newValue }
+            }
+            
+            
+            ForEach(shapeSetGame.dummy) { card in 
+                CardView(card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .rotationEffect(.degrees(rotation))
+                    
+            }
+        }
+        .frame(width: cardWidth, height: cardWidth / (2/3))
     }
     
     var score: some View  {
@@ -41,84 +72,88 @@ struct ShapeSetGameView: View {
     
     var buttons: some View {
         HStack(alignment: .bottom, spacing: 40) {
-            drawButton
-            newgameButton
+            shuffle
             cheatButton
         }
         .padding()
     }
     
-    var drawButton: some View {
-        Button(
-            action: {
-                let drawCardId = shapeSetGame.draw()
-                var delay: TimeInterval = 0
-                for id in drawCardId {
-                    if let drawCard = shapeSetGame.choices.first(where: { $0.id == id } ) {
-                        withAnimation(.easeInOut(duration: 1).delay(delay)) {
-                            deal(card: drawCard)
-                        }
-                        delay += 0.1
+    var deck: some View {
+        var deckView: some View {
+            ZStack {
+                var offset: CGFloat = 0
+                var computedOffset: CGFloat {
+                    get {
+                        offset = offset + 0.05
+                        return offset
                     }
+                    set { offset = newValue }
                 }
-            }, label: {
-                VStack(spacing: 5) {
-                    deckView
-                    Text("Draw")
+                
+                ForEach(shapeSetGame.deck) { card  in
+                    let cardOffset = computedOffset
+                    CardView(card)
+                        .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                        .transition(.asymmetric(insertion: .identity, removal: .identity))
+                        .offset(
+                            x: cardOffset,
+                            y: cardOffset
+                        )
+                        .zIndex(-cardOffset)
+                        .shadow(radius: 0.1, x: 0.01, y: 0.01)
+                        .frame(width: cardWidth, height: cardWidth / (2/3))
                 }
             }
-        )
-    }
-    
-    var newgameButton: some View {
-        Button(action: {
-            withAnimation() {
-                shapeSetGame.newGame()
+        }
+        
+        return deckView
+            .onTapGesture {
+                draw()
+            }
+        
+        func draw() -> Void {
+            var drawCardId: Array<Card.ID> = []
+            withAnimation {
+                drawCardId = shapeSetGame.draw()
             }
             var delay: TimeInterval = 0
-            for card in shapeSetGame.choices {
+            for id in drawCardId {
                 withAnimation(.easeInOut(duration: 1).delay(delay)) {
-                    deal(card: card)
+                    if let drawCard = shapeSetGame.hand.first(where: { $0.id == id } ) {
+                        deal(card: drawCard)
+                        delay += dealDelay
+                    }
                 }
-                delay += 0.1
             }
-        }, label: {
-            VStack(spacing: 5) {
-                Image(systemName: "gamecontroller")
-                    .font(.title)
-                    .imageScale(.large)
-                Text("New Game")
-            }
-        })
+        }
     }
     
-    @Namespace private var dealingNameSpace
-    
-    var deckView: some View {
-        ZStack {
-            let cardWith: CGFloat = 50
-            var offset: CGFloat = 0
-            var computedOffset: CGFloat {
-                get {
-                    offset = offset + 0.05
-                    return offset
+    var shuffle: some View {
+        return Button(
+            action: { shuffle() },
+            label: {
+                VStack(spacing: 5) {
+                    Image(systemName: "shuffle")
+                        .font(.title)
+                        .imageScale(.large)
+                    Text("Shuffle")
                 }
-                set { offset = newValue }
+            })
+        
+        func shuffle() -> Void {
+            withAnimation(.easeInOut) {
+                dealt = Set()
+                shapeSetGame.shuffle()
+            }
+            shapeSetGame.firstDeal()
+            var delay: TimeInterval = 0
+            for card in shapeSetGame.hand {
+                withAnimation(.easeInOut(duration: 1).delay(delay)) {
+                    deal(card: card)
+                    delay += dealDelay
+                }
             }
             
-            ForEach(shapeSetGame.deck) { card  in
-                let cardOffset = computedOffset
-                CardView(card)
-                    .offset(
-                        x: cardOffset,
-                        y: cardOffset
-                    )
-                    .zIndex(-cardOffset)
-                    .shadow(radius: 0.1, x: 0.01, y: 0.01)
-                    .frame(width: cardWith, height: cardWith / (2/3))
-                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
-                    .transition(.asymmetric(insertion: .identity, removal: .identity))
-            }
         }
     }
     
@@ -139,29 +174,40 @@ struct ShapeSetGameView: View {
     }
     
     var cards: some View {
-        AspectVGrid(shapeSetGame.choices, aspectRatio: 3/4) { card in
+        AspectVGrid(shapeSetGame.hand, aspectRatio: 3/4) { card in
             if isDealt(card: card) {
                 CardView(card)
+                    .zIndex(scoreChange(by: card) != 0 ? 1 : 0)
+                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .transition(/*@START_MENU_TOKEN@*/.identity/*@END_MENU_TOKEN@*/)
                     .padding(5)
                     .overlay(FlyingNumber(number: scoreChange(by: card)))
-                    .zIndex(scoreChange(by: card) != 0 ? 1 : 0)
                     .onTapGesture {
                         choose(card: card)
                     }
+                    .onAppear {
+                        shapeSetGame.faceUp(card: card)
+                    }
                     .onDisappear {
                         dealt.remove(card.id)
+                        withAnimation {
+                            shapeSetGame.faceDown(card: card)
+                        }
                     }
-                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
-                    .transition(.asymmetric(insertion: .identity, removal: .identity))
+            } else {
+                Color.clear
             }
         }
         .onAppear {
+            withAnimation {
+                shapeSetGame.firstDeal()
+            }
             var delay: TimeInterval = 0
-            withAnimation(.easeInOut(duration: 1).delay(delay)) {
-                for card in shapeSetGame.choices {
+            for card in shapeSetGame.hand {
+                withAnimation(.easeInOut(duration: 1).delay(delay)) {
                     deal(card: card)
-                    delay += 0.2
                 }
+                delay += dealDelay
             }
         }
     }
@@ -173,9 +219,6 @@ struct ShapeSetGameView: View {
     }
     
     func deal(card: Card) -> Void {
-        withAnimation() {
-            shapeSetGame.faceUp(card: card)            
-        }
         dealt.insert(card.id)
     }
     
@@ -188,17 +231,17 @@ struct ShapeSetGameView: View {
             let scoreChange = shapeSetGame.score - scoreBeforeChoosing
             lastScoreChange = (scoreChange , causeBy: card.id)
         }
-        dealCards()
+        replaceCards()
         
-        func dealCards() -> Void {
+        func replaceCards() -> Void {
             if popedCards.count != 0 {
                 var delay : TimeInterval = 0
                 for id in popedCards {
-                    if let popedCard = shapeSetGame.choices.first(where: {$0.id == id}) {
+                    if let popedCard = shapeSetGame.hand.first(where: {$0.id == id}) {
                         withAnimation(.easeInOut(duration: 0.5).delay(delay)) {
                             deal(card: popedCard)
                         }
-                        delay += 0.2
+                        delay += dealDelay
                     }
                 }
             }

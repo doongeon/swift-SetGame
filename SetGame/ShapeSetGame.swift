@@ -26,8 +26,12 @@ class ShapeSetGame: ObservableObject {
         setGame.deck.count
     }
     
-    var choices: Array<Card> {
-        setGame.choices
+    var hand: Array<Card> {
+        setGame.hand
+    }
+    
+    var dummy: Array<Card> {
+        setGame.dummy
     }
     
     var isSet: Bool {
@@ -44,8 +48,20 @@ class ShapeSetGame: ObservableObject {
     
     // MARK: - Intents
     
-    func newGame() {
-        self.setGame = SetGame(cardTheme.deckGenerator)
+    func firstDeal() {
+        setGame.firstDeal()
+    }
+    
+    func faceUp(card: Card) -> Void {
+        setGame.faceUp(card: card)
+    }
+    
+    func faceDown(card: Card) -> Void {
+        setGame.faceDown(card: card)
+    }
+    
+    func shuffle() {
+        setGame.shuffle()
     }
     
     func draw() -> Array<Card.ID> {
@@ -58,9 +74,5 @@ class ShapeSetGame: ObservableObject {
     
     func cheat() -> Void  {
         setGame.cheat()
-    }
-    
-    func faceUp(card: Card) -> Void {
-        setGame.faceUp(card: card)
     }
 }
