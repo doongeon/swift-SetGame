@@ -21,30 +21,21 @@ struct SetGame {
     
     mutating func firstDeal() -> Void {
         for _ in 0..<12 {
-            if let  popedCard = deck.popLast() {
+            if var popedCard = deck.popLast() {
+                popedCard.isFaceUp = true
                 hand.append(popedCard)
             }
         }
     }
     
-    mutating func faceUp(card: Card) -> Void {
-        if let indexOfCard = hand.firstIndex(where: {$0.id == card.id}) {
-            hand[indexOfCard].isFaceUp = true 
-        }
-    }
-    
-    mutating func faceDown(card: Card) -> Void {
-        if let indexOfCard = hand.firstIndex(where: {$0.id == card.id}) {
-            hand[indexOfCard].isFaceUp = false
-        }
-    }
-    
     mutating func shuffle() -> Void {
         while !hand.isEmpty {
-            deck.append(hand.popLast()!)
+            var card = hand.popLast()
+            deck.append(card!.reset())
         }
         while !dummy.isEmpty {
-            deck.append(dummy.popLast()!)
+            var card = dummy.popLast()
+            deck.append(card!.reset())
         }
         deck.shuffle()
     }
@@ -61,8 +52,9 @@ struct SetGame {
         var result: Array<Card.ID> = []
         
         for _ in 0..<3 {
-            if let popedCard = deck.popLast() {
+            if var popedCard = deck.popLast() {
                 hand.append(popedCard)
+                hand[hand.count - 1].isFaceUp = true
                 result.append(popedCard.id)
             }
         }
@@ -144,7 +136,7 @@ struct SetGame {
                 choice.id == card.id
             }) {
                 if var popedCard = deck.popLast() {
-                    popedCard.isFaceUp = true
+                    popedCard.isFaceUp = true 
                     popedCards.append(popedCard.id)
                     dummy.append(hand[indexOfSettedCard].dummify())
                     hand[indexOfSettedCard] = popedCard

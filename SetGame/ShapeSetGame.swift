@@ -52,14 +52,6 @@ class ShapeSetGame: ObservableObject {
         setGame.firstDeal()
     }
     
-    func faceUp(card: Card) -> Void {
-        setGame.faceUp(card: card)
-    }
-    
-    func faceDown(card: Card) -> Void {
-        setGame.faceDown(card: card)
-    }
-    
     func shuffle() {
         setGame.shuffle()
     }

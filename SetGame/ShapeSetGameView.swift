@@ -58,7 +58,7 @@ struct ShapeSetGameView: View {
                 CardView(card)
                     .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
                     .rotationEffect(.degrees(rotation))
-                    
+                    .transition(.asymmetric(insertion: .identity, removal: .identity))
             }
         }
         .frame(width: cardWidth, height: cardWidth / (2/3))
@@ -113,18 +113,17 @@ struct ShapeSetGameView: View {
         
         func draw() -> Void {
             var drawCardId: Array<Card.ID> = []
-            withAnimation {
-                drawCardId = shapeSetGame.draw()
-            }
+            drawCardId = shapeSetGame.draw()
             var delay: TimeInterval = 0
             for id in drawCardId {
-                withAnimation(.easeInOut(duration: 1).delay(delay)) {
-                    if let drawCard = shapeSetGame.hand.first(where: { $0.id == id } ) {
+                if let drawCard = shapeSetGame.hand.first(where: { $0.id == id } ) {
+                    withAnimation(.easeInOut(duration: 1).delay(delay)) {
                         deal(card: drawCard)
                         delay += dealDelay
                     }
                 }
             }
+            
         }
     }
     
@@ -141,19 +140,18 @@ struct ShapeSetGameView: View {
             })
         
         func shuffle() -> Void {
-            withAnimation(.easeInOut) {
-                dealt = Set()
+            withAnimation {
                 shapeSetGame.shuffle()
-            }
-            shapeSetGame.firstDeal()
-            var delay: TimeInterval = 0
-            for card in shapeSetGame.hand {
-                withAnimation(.easeInOut(duration: 1).delay(delay)) {
-                    deal(card: card)
+            } completion: {
+                shapeSetGame.firstDeal()
+                var delay: TimeInterval = 0
+                for card in shapeSetGame.hand {
+                    withAnimation(.easeInOut(duration: 1).delay(delay)) {
+                        deal(card: card)
+                    }
                     delay += dealDelay
                 }
             }
-            
         }
     }
     
@@ -179,20 +177,14 @@ struct ShapeSetGameView: View {
                 CardView(card)
                     .zIndex(scoreChange(by: card) != 0 ? 1 : 0)
                     .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
-                    .transition(/*@START_MENU_TOKEN@*/.identity/*@END_MENU_TOKEN@*/)
+                    .transition(.asymmetric(insertion: .identity, removal: .identity))
                     .padding(5)
                     .overlay(FlyingNumber(number: scoreChange(by: card)))
                     .onTapGesture {
                         choose(card: card)
                     }
-                    .onAppear {
-                        shapeSetGame.faceUp(card: card)
-                    }
                     .onDisappear {
                         dealt.remove(card.id)
-                        withAnimation {
-                            shapeSetGame.faceDown(card: card)
-                        }
                     }
             } else {
                 Color.clear
